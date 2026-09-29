@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: airflow
+      # ALTERADO: nome correto da variável; a versão anterior tinha OSTGRES_PASSWORD.
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      # ALTERADO: volume separado para esta instalação; o volume antigo não é apagado.
+      - postgres_data_local:/var/lib/postgresql/data
+    # ALTERADO: os serviços Airflow só devem conectar depois que o banco aceitar conexões.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  airflow-init:
+    image: apache/airflow:2.10.0
+    container_name: airflow-init
+    # ALTERADO: aguarda o Postgres ficar saudável antes de migrar o banco do Airflow.
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      # ALTERADO: usuário local criado no primeiro start; troque a senha antes de expor a interface.
+      _AIRFLOW_WWW_USER_USERNAME: airflow
+      _AIRFLOW_WWW_USER_PASSWORD: airflow
+    # ALTERADO: migra o banco e cria a conta Admin usada para entrar na interface.
+    command: >
+      bash -c "airflow db migrate &&
+      (airflow users create
+      --username $${_AIRFLOW_WWW_USER_USERNAME}
+      --password $${_AIRFLOW_WWW_USER_PASSWORD}
+      --firstname Local
+      --lastname Admin
+      --role Admin
+      --email airflow@example.com || true)"
+    restart: "no"
+
+  airflow-webserver:
+    image: apache/airflow:2.10.0
+    container_name: airflow-webserver
+    # ALTERADO: aguarda a migração do Airflow concluir antes de iniciar o webserver.
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    command: airflow webserver
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+
+  airflow-scheduler:
+    image: apache/airflow:2.10.0
+    container_name: airflow-scheduler
+    # ALTERADO: aguarda a migração do Airflow concluir antes de iniciar o scheduler.
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    command: airflow scheduler
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+
+volumes:
+  postgres_data_local:
