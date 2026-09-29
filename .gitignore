@@ -34,3 +34,32 @@ airflow/webserver_config.py
 .DS_Store
 Thumbs.db
 .idea/
+# Ambientes virtuais Python
+venv/ 
+.venv/ 
+env/
+
+# Arquivos temporários e Cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*pytest_cache/
+
+# Armazenamento de Dados do Lakehouse (NÃO enviar dados brutos/pesados para o Git)
+data/
+data/bronze/
+data/silver/
+data/gold/
+*.parquet
+*.csv
+*.json
+*.sqlite
+*.duckdb
+
+# Variáveis de ambiente e segredos
+.env
+
+# Arquivos de editores e SO
+.DS_Store
+.vscode/
+.idea/

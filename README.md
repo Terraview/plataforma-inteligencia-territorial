@@ -160,3 +160,6 @@ Este projeto é destinado ao trabalho em **dupla**. A organização interna, dis
 | **Trabalho em Equipe & Git** | Uso de branches, mensagens de commit semânticas, code reviews em Pull Requests e divisão equilibrada de tarefas gerida autonomamente pela dupla. | 25% |
 | **Qualidade de Código & DevOps** | Containerização Docker, automação no GitHub Actions, presença de testes automatizados de dados e código. | 20% |
 | **Documentação & Arquitetura** | Clareza no `README.md`, diagrama C4 Model, dicionário de dados e facilidade de reprodução do ambiente. | 20% |
+
+# plataforma-inteligencia-territorial
+Data Lakehouse Analítico para inteligência territorial e risco socioeconômico (IBGE + INMET/CAGED).
