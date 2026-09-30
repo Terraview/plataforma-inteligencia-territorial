@@ -21,7 +21,8 @@ dist/
 !.env.*.example
 
 # Dados e configuracoes gerados localmente pelo Airflow
-airflow/logs/
+airflow/
+logs/
 airflow/airflow.db
 airflow/webserver_config.py
 
