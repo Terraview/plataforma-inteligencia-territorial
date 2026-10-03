@@ -35,3 +35,7 @@ airflow/webserver_config.py
 .DS_Store
 Thumbs.db
 .idea/
+# Dados brutos locais
+data/bronze/
+data/silver/
+data/gold/
