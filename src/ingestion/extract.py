@@ -56,44 +56,75 @@ def extrair_dados(url, pasta_destino, nome_arquivo):
 
 
 
-# 2. FUNÇÃO DO CAGED (Acessa as subpastas 202201 até 202212)
+# CAGED - Conexão FTP com o MTE (Ministério do Trabalho e Emprego)
 
-def extrair_caged_ftp(pasta_servidor="pdet/microdados/NOVO CAGED", pasta_destino="data/bronze/caged", ano="2022"):
+def extrair_caged_ftp(
+    pasta_servidor="pdet/microdados/NOVO CAGED",
+    pasta_destino="data/bronze/caged",
+    ano="2022",
+    meses_filtro=["202201"]
+):
     try:
         Path(pasta_destino).mkdir(parents=True, exist_ok=True)
+
         print("🔌 Conectando ao servidor FTP do MTE (ftp.mtps.gov.br)...")
-        
+
         ftp = FTP("ftp.mtps.gov.br")
         ftp.login()  # Login anônimo
-        
-        # Gera a lista das subpastas mensais: ['202201', '202202', ..., '202212']
-        meses = [f"{ano}{mes:02d}" for mes in range(1, 13)]
-        
+
+        # Se você passar meses_filtro (ex: ["202201"]), baixa só esses.
+        # Senão, gera de 01 a 12.
+        if meses_filtro:
+            meses = meses_filtro
+        else:
+            meses = [f"{ano}{mes:02d}" for mes in range(1, 13)]
+
         for mes in meses:
             caminho_mes = f"/{pasta_servidor}/{ano}/{mes}"
+
             try:
-                # Entra na subpasta do mês (ex: /pdet/microdados/NOVO CAGED/2022/202201)
                 ftp.cwd(caminho_mes)
                 arquivos = ftp.nlst()
-                
-                # Encontra os arquivos .7z dentro da pasta do mês
-                arquivos_7z = [f for f in arquivos if f.upper().endswith(".7Z")]
-                
+
+                arquivos_7z = [
+                    f for f in arquivos if f.upper().endswith(".7Z")
+                ]
+
                 for item in arquivos_7z:
                     nome_arquivo = Path(item).name
                     caminho_local = Path(pasta_destino) / nome_arquivo
-                    print(f"⬇ Baixando {nome_arquivo} (Pasta {mes})...")
-                    
+
+                    # 1. PULA O DOWNLOAD SE O ARQUIVO JÁ EXISTE LOCALMENTE
+                    if (
+                        caminho_local.exists()
+                        and caminho_local.stat().st_size > 0
+                    ):
+                        print(
+                            f"⏩ {nome_arquivo} já baixado em "
+                            f"{pasta_destino}. Pulando..."
+                        )
+                        continue
+
+                    print(f"⬇️ Baixando {nome_arquivo} (Pasta {mes})...")
+
+                    # 2. USAMOS blocksize DE 1MB (MUITO MAIS RÁPIDO QUE O PADRÃO DE 8KB)
                     with open(caminho_local, "wb") as f:
-                        ftp.retrbinary(f"RETR {nome_arquivo}", f.write)
-                        
+                        ftp.retrbinary(
+                            f"RETR {nome_arquivo}",
+                            f.write,
+                            blocksize=1024 * 1024
+                        )
+
                     print(f"✅ Salvo em: {caminho_local}")
-                    
+
             except Exception as erro_mes:
-                print(f"⚠️ Não foi possível acessar ou baixar o mês {mes}: {erro_mes}")
-                
+                print(
+                    f"⚠️ Não foi possível acessar ou baixar o mês "
+                    f"{mes}: {erro_mes}"
+                )
+
         ftp.quit()
-        print("🎉 Download de todos os meses do CAGED concluído!")
-        
+        print("🎉 Download do CAGED concluído!")
+
     except Exception as erro:
         print(f"❌ Erro na conexão FTP com o CAGED: {erro}")
