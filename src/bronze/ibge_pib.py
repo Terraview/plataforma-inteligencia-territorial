@@ -1,15 +1,15 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from bronze.extract import extrair_dados
+
+SINDRA_PIB_URL=os.getenv("SINDRA_PIB_URL")
 
 def execut_pib():
    
-    url = (
-    "http://apisidra.ibge.gov.br/values"
-    "/t/5938"
-    "/n6/all"
-    "/v/37"
-    "/p/2019-2023"
-)
-    print(url)
+    url = SINDRA_PIB_URL
+    
     
     extrair_dados(
     
