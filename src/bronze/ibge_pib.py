@@ -1,4 +1,4 @@
-from extract import extrair_dados
+from bronze.extract import extrair_dados
 
 def execut_pib():
    
@@ -14,7 +14,7 @@ def execut_pib():
     extrair_dados(
     
         url=url,
-        pasta_destino="data/bronze/ibge",
+        pasta_destino="ibge",
         nome_arquivo="pib_municipal_2019_2023.json"
     )
 

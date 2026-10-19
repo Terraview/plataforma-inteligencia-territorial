@@ -1,5 +1,5 @@
-from url_builder import construir_url
-from extract import extrair_dados
+from bronze.url_builder import construir_url
+from bronze.extract import extrair_dados
 
 
 def execut_populacao():
@@ -14,7 +14,7 @@ def execut_populacao():
 
     dados = extrair_dados(
         url=url,
-        pasta_destino="data/bronze/ibge",
+        pasta_destino="ibge",
         nome_arquivo="populacao_2019_2021.json"
     )
 
