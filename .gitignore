@@ -12,6 +12,3 @@ __pycache__/
 
 # VsCode
 .vscode/
-
-# dotenv
-.env
