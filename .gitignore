@@ -12,3 +12,12 @@ __pycache__/
 
 # VsCode
 .vscode/
+
+<<<<<<< HEAD
+# dotenv
+.env
+=======
+#venv
+.venv/
+>>>>>>> origin/feat/Anderson
+
