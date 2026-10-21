@@ -3,8 +3,8 @@ airflow/logs/
 airflow/scheduler/
 
 # Dados 
-caged/
-ibge/
+Data_Bronze/
+Data_Silver/
 
 # Python
 *.pyc
