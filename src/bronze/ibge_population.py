@@ -1,16 +1,15 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from bronze.url_builder import construir_url
 from bronze.extract import extrair_dados
 
+SIDRA_POPULATION = os.getenv("SIDRA_POPULATION")
 
 def execut_populacao():
 
-    url = (
-        "http://apisidra.ibge.gov.br/values"
-        "/t/6579"
-        "/n3/all"
-        "/v/9324"
-        "/p/2019-2021"
-    )
+    url = SIDRA_POPULATION
 
     dados = extrair_dados(
         url=url,
