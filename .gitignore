@@ -5,6 +5,7 @@ airflow/scheduler/
 # Dados 
 Data_Bronze/
 Data_Silver/
+caged/
 
 # Python
 *.pyc
@@ -17,4 +18,5 @@ __pycache__/
 .env
 #venv
 .venv/
+.venv-spark311/
 

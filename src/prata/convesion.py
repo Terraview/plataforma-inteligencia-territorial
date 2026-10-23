@@ -7,7 +7,7 @@ from pathlib import Path
 def extract_7z():
 
     origin_path = Path("caged")
-    destination_path = Path("caged/extracted")
+    destination_path = Path("Data_Bronze/Caged_extracted/")
 
     destination_path.mkdir(
         parents=True,
