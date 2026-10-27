@@ -6,6 +6,7 @@ airflow/scheduler/
 Data_Bronze/
 Data_Silver/
 caged/
+ibge/
 
 # Python
 *.pyc
@@ -19,4 +20,5 @@ __pycache__/
 #venv
 .venv/
 .venv-spark311/
+.venv-wsl
 
