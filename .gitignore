@@ -7,6 +7,8 @@ Data_Bronze/
 Data_Silver/
 caged/
 ibge/
+Data_gold/
+Caged_json
 
 # Python
 *.pyc
@@ -17,8 +19,8 @@ __pycache__/
 
 # dotenv
 .env
+.env.db
 #venv
 .venv/
 .venv-spark311/
 .venv-wsl
-

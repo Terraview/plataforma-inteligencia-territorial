@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from bronze.extract import extrair_dados
+from src.bronze.extract import extrair_dados
 
 SINDRA_PIB_URL=os.getenv("SINDRA_PIB_URL")
 

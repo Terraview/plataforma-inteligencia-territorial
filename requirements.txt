@@ -4,8 +4,10 @@ charset-normalizer==3.5.2
 idna==3.20
 inflate64==1.0.4
 multivolumefile==0.2.3
+psycopg2-binary==2.9.9
 psutil==7.2.2
 py4j==0.10.9.7
+pyarrow==17.0.0
 py7zr==1.1.4
 pybcj==1.0.8
 pycryptodomex==3.24.1

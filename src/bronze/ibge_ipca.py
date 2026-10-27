@@ -1,5 +1,5 @@
-from bronze.url_builder import construir_url
-from bronze.extract import extrair_dados
+from src.bronze.url_builder import construir_url
+from src.bronze.extract import extrair_dados
 
 
 
