@@ -2,7 +2,7 @@
 from pyspark.sql import types as T
 
 ANOS = list(range(2019, 2024))                 # 2019..2023
-REGIOES_ALVO = ("Centro-Oeste", "Sul")
+REGIOES_ALVO = ("Sudeste", "Sul")
 
 # Padrões (glob) para localizar os arquivos dentro das pastas de entrada.
 CAGED_PATTERNS = ["CAGED*.json", "caged*.json"]
