@@ -2,8 +2,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from bronze.url_builder import construir_url
-from bronze.extract import extrair_dados
+from src.bronze.url_builder import construir_url
+from src.bronze.extract import extrair_dados
 
 SIDRA_POPULATION = os.getenv("SIDRA_POPULATION")
 

@@ -1,34 +1,41 @@
 from ftplib import FTP
 from pathlib import Path
-from bronze.caged_mapper import build_path_caged, gerar_competencias
+import tempfile
 
+from src.bronze.caged_mapper import build_path_caged, gerar_competencias
 
 
 def download_caged_ftp():
     parta_destino = "caged"
+    competencias = gerar_competencias()
+    destino = Path(parta_destino)
 
-    Path(parta_destino).mkdir(
-        parents=True,
-        exist_ok=True
-    )
+    destino.mkdir(parents=True, exist_ok=True)
 
-    ftp = FTP('ftp.mtps.gov.br')
-    ftp.login()
+    with FTP("ftp.mtps.gov.br") as ftp:
+        ftp.login()
+        for competencia in competencias:
+            caminho_remoto = build_path_caged(competencia)
+            arquivo_local = destino / caminho_remoto.split("/")[-1]
+            nome_arquivo = arquivo_local.name
+            with tempfile.NamedTemporaryFile(
+                dir=destino,
+                prefix=f".{nome_arquivo}.",
+                suffix=".part",
+                delete=False,
+            ) as arquivo_temporario:
+                caminho_temporario = Path(arquivo_temporario.name)
 
-    for competencia in gerar_competencias():
-        caminho_remoto = build_path_caged(competencia)
-        nome_arquivo = caminho_remoto.split("/")[-1]
-        caminho_local = Path(parta_destino) / nome_arquivo
+            try:
+                with caminho_temporario.open("wb") as arquivo:
+                    ftp.retrbinary(
+                        f"RETR /pdet/microdados/{caminho_remoto}",
+                        arquivo.write,
+                    )
 
-        try:
-            with open(caminho_local, 'wb') as arquivo:
-                ftp.retrbinary(
-                    f"RETR /pdet/microdados/{caminho_remoto}",
-                    arquivo.write
-                )
-            print(f'Arquivo {nome_arquivo} baixado com sucesso em {parta_destino}.')
-
-        except Exception as e:
-            print(f'Erro ao baixar o arquivo {nome_arquivo}: {e}')
-
-    ftp.quit()
+                caminho_temporario.replace(arquivo_local)
+                print(f"Arquivo {nome_arquivo} baixado e substituído em {destino}.")
+            except Exception as error:
+                caminho_temporario.unlink(missing_ok=True)
+                print(f"Erro ao baixar {nome_arquivo}: {error}")
+                raise
